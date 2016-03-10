@@ -15,23 +15,96 @@ void setup() {
   white_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
   init_board();
   //set_fill_patern();
+  //white_choices[4][2]=true;
+  //white_choices[5][3]=true;
+  //white_choices[0][0]=true;
+  //white_choices[7][7]=true;  
+  //black_choices[3][2]=true;
+  //black_choices[2][3]=true;
+  //black_choices[0][0]=true;
+  //black_choices[7][7]=true;  
+
 }
 
 void mousePressed(){
   int x = mouseX/(width/GRID_WIDTH);
   int y = mouseY/(height/GRID_HEIGHT);
   
-  //cells[x][y] = (cells[x][y]+1) % 3;
-  cells[x][y] = turn;
-  if (turn == BLACK){
-    turn = WHITE;
-  }else{
-    turn = BLACK;
-  }
+  cells[x][y] = (cells[x][y]+1) % 3;
+  //cells[x][y] = turn;
+  //if (turn == BLACK){
+  //  turn = WHITE;
+  //}else{
+  //  turn = BLACK;
+  //}
 }
 
 
 
+void update_black_choices(){
+  
+  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
+    for (int j = 0; j < GRID_HEIGHT; j = j + 1) { 
+      black_choices[i][j] = check_can_put_black(i,j);
+    }
+  }
+}
+
+boolean look_up_bottom(int x, int y){
+  for (int j = y + 2; j < GRID_HEIGHT; j = j + 1) { 
+    if(cells[x][j] == BLANK){
+      return false;
+    }else if (cells[x][j] == BLACK){
+      return true;
+    }else{
+      continue;
+    }
+  }
+  return false;
+}
+
+
+boolean check_can_put_black(int x,int y){  
+  boolean c;
+  
+      if(cells[x][y] != BLANK){ 
+       c= false;
+      }
+/*      else if(x>0 && y>0 && cells[x-1][y-1] == WHITE){
+        //top left
+       c= true;
+      }else if (y>0 && cells[x][y-1] == WHITE){        
+        //top
+       c = true;
+       }else if (x< GRID_WIDTH -1 && y > 0 && cells[x+1][y-1] == WHITE){
+         //top right
+        c= true;
+      }else if (x>0 && cells[x-1][y] == WHITE){
+        //left
+        c= true;
+      }else if (x<GRID_WIDTH -1 && cells[x+1][y] == WHITE){
+        //right
+        c= true;
+      }else if (x>0 && y<GRID_HEIGHT -1 && cells[x-1][y+1] == WHITE){
+        //bottom left
+        c= true;
+      }*/
+      else if (y<GRID_HEIGHT -1 && cells[x][y+1] == WHITE){
+        //bottom
+        c = look_up_bottom(x,y);
+      }/*else if (x < GRID_WIDTH -1 && y < GRID_HEIGHT -1 && cells[x+1][y+1] == WHITE){
+        //bottom right
+        c= true;
+      }*/else{
+        c= false;
+      }
+      return c;
+  }
+ 
+
+//void update_white_choices(){
+  
+//}
 
 
 
@@ -42,8 +115,10 @@ void mousePressed(){
 
 
 
-
-void draw() {
+void draw(){
+    update_black_choices();
+  //update_white_choices();
+  
   //clear screen
   background(200);
   int cell_w = width / GRID_WIDTH;
@@ -111,7 +186,7 @@ void draw() {
        continue;
      } 
      ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
-  }
+    }
   }
 }
 
