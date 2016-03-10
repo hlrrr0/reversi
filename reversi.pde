@@ -62,7 +62,31 @@ boolean look_up_bottom(int x, int y){
   }
   return false;
 }
+boolean look_up_left(int x, int y){
+  for (int i = x - 2; 0 <= i; i = i - 1) { 
+    if(cells[i][y] == BLANK){
+      return false;
+    }else if (cells[i][y] == BLACK){
+      return true;
+    }else{
+      continue;
+    }
+  }
+  return false;
+}
 
+boolean look_up_top_right(int x,int y){
+  for (int i = x + 2,j = y - 2; i<GRID_WIDTH&&0<=j; i = i + 1,j = j - 1){ 
+    if(cells[i][j] == BLANK){
+      return false;
+    }else if (cells[i][j] == BLACK){
+      return true;
+    }else{
+      continue;
+    }
+  }
+  return false;
+}
 
 boolean check_can_put_black(int x,int y){  
   boolean c;
@@ -76,13 +100,13 @@ boolean check_can_put_black(int x,int y){
       }else if (y>0 && cells[x][y-1] == WHITE){        
         //top
        c = true;
-       }else if (x< GRID_WIDTH -1 && y > 0 && cells[x+1][y-1] == WHITE){
+       }*/else if (x< GRID_WIDTH -1 && y > 0 && cells[x+1][y-1] == WHITE){
          //top right
-        c= true;
+        c= look_up_top_right(x,y);
       }else if (x>0 && cells[x-1][y] == WHITE){
         //left
-        c= true;
-      }else if (x<GRID_WIDTH -1 && cells[x+1][y] == WHITE){
+        c= look_up_left(x,y);
+      }/*else if (x<GRID_WIDTH -1 && cells[x+1][y] == WHITE){
         //right
         c= true;
       }else if (x>0 && y<GRID_HEIGHT -1 && cells[x-1][y+1] == WHITE){
