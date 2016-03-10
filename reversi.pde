@@ -26,17 +26,27 @@ void setup() {
 
 }
 
+
 void mousePressed(){
   int x = mouseX/(width/GRID_WIDTH);
   int y = mouseY/(height/GRID_HEIGHT);
+  
+  if(choices(turn)[x][y]){
+    cells[x][y] = turn;
+    reverse_line(x,y,turn,-1,-1);
+    reverse_line(x,y,turn,0,-1);
+    reverse_line(x,y,turn,1,-1);
+    reverse_line(x,y,turn,-1,0);
+    reverse_line(x,y,turn,1,0);
+    reverse_line(x,y,turn,-1,1);
+    reverse_line(x,y,turn,0,1);
+    reverse_line(x,y,turn,1,1);
+    
+    
+    turn = complement_type(turn);
+  }
+  //cells[x][y] = (cells[x][y]+1) % 3;
 
-  cells[x][y] = (cells[x][y]+1) % 3;
-  //cells[x][y] = turn;
-  //if (turn == BLACK){
-  //  turn = WHITE;
-  //}else{
-  //  turn = BLACK;
-  //}
 }
 
 
@@ -66,6 +76,28 @@ boolean look_up_line(int x, int y,int type, int dx, int dy){
   }
   return false;
 }
+
+int reverse_line(int x, int y,int type, int dx, int dy){
+  int count = 0;
+  if (!look_up_line(x,y,type,dx,dy)){
+    return 0;
+  } 
+  for (
+  int i = x + dx,j = y + dy;
+  0 <= i&&i < GRID_WIDTH && 0<=j && j <GRID_HEIGHT;
+  i = i + dx,j = j + dy){
+    if(cells[i][j] == BLANK){
+      break;
+    }else if (cells[i][j] == type){
+      break;
+    }else{
+      count +=1;
+      cells[i][j]=type;
+    }
+  }
+  return count;
+}
+
 int complement_type(int type){
   if(type == WHITE){
     return BLACK;
@@ -75,7 +107,15 @@ int complement_type(int type){
     return BLANK;
   }
 }
-
+boolean[][] choices(int type){
+  if(type == WHITE){
+    return white_choices;
+  }else if (type == BLACK){
+    return black_choices;
+  }else{
+    return null;
+  }
+}
 boolean check_can_put(int x,int y, int type){
   int comp_type = complement_type(type);
   boolean c =false;
