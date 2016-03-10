@@ -41,23 +41,24 @@ void mousePressed(){
 
 
 
-void update_black_choices(){
+void update_choices(){
   
   for (int i = 0; i < GRID_WIDTH; i = i + 1) {
     for (int j = 0; j < GRID_HEIGHT; j = j + 1) { 
-      black_choices[i][j] = check_can_put_black(i,j);
+      black_choices[i][j] = check_can_put(i,j,BLACK);
+      white_choices[i][j] = check_can_put(i,j,WHITE);
     }
   }
 }
 
-boolean look_up_line(int x, int y, int dx, int dy){
+boolean look_up_line(int x, int y,int type, int dx, int dy){
   for (
   int i = x + 2 * dx,j = y + 2 * dy;
   0 <= i&&i < GRID_WIDTH && 0<=j && j <GRID_HEIGHT;
   i = i + dx,j = j + dy){ 
     if(cells[i][j] == BLANK){
       return false;
-    }else if (cells[i][j] == BLACK){
+    }else if (cells[i][j] == type){
       return true;
     }else{
       continue;
@@ -65,61 +66,55 @@ boolean look_up_line(int x, int y, int dx, int dy){
   }
   return false;
 }
+int complement_type(int type){
+  if(type == WHITE){
+    return BLACK;
+  }else if (type == BLACK){
+    return WHITE;
+  }else{
+    return BLANK;
+  }
+}
 
-boolean check_can_put_black(int x,int y){  
+boolean check_can_put(int x,int y, int type){
+  int comp_type = complement_type(type);
   boolean c;
-  
       if(cells[x][y] != BLANK){ 
        c= false;
       }
-      else if(x>0 && y>0 && cells[x-1][y-1] == WHITE){
+      else if(x>0 && y>0 && cells[x-1][y-1] == comp_type){
         //top left
-        c= look_up_line(x,y,-1,-1);
-      }else if (y>0 && cells[x][y-1] == WHITE){        
+        c= look_up_line(x,y,type,-1,-1);
+      }else if (y>0 && cells[x][y-1] == comp_type){        
         //top
-        c= look_up_line(x,y,0,-1);
-       }else if (x< GRID_WIDTH -1 && y > 0 && cells[x+1][y-1] == WHITE){
+        c= look_up_line(x,y,type,0,-1);
+       }else if (x< GRID_WIDTH -1 && y > 0 && cells[x+1][y-1] == comp_type){
          //top right
-        c= look_up_line(x,y,1,-1);
-      }else if (x>0 && cells[x-1][y] == WHITE){
+        c= look_up_line(x,y,type,1,-1);
+      }else if (x>0 && cells[x-1][y] == comp_type){
         //left
-        c= look_up_line(x,y,-1,0);
-      }else if (x<GRID_WIDTH -1 && cells[x+1][y] == WHITE){
+        c= look_up_line(x,y,type,-1,0);
+      }else if (x<GRID_WIDTH -1 && cells[x+1][y] == comp_type){
         //right
-        c= look_up_line(x,y,1,0);
-      }else if (x>0 && y<GRID_HEIGHT -1 && cells[x-1][y+1] == WHITE){
+        c= look_up_line(x,y,type,1,0);
+      }else if (x>0 && y<GRID_HEIGHT -1 && cells[x-1][y+1] == comp_type){
         //bottom left
-        c= look_up_line(x,y,-1,1);
+        c= look_up_line(x,y,type,-1,1);
       }
-      else if (y<GRID_HEIGHT -1 && cells[x][y+1] == WHITE){
+      else if (y<GRID_HEIGHT -1 && cells[x][y+1] == comp_type){
         //bottom
-        c= look_up_line(x,y,0,1);
-      }else if (x < GRID_WIDTH -1 && y < GRID_HEIGHT -1 && cells[x+1][y+1] == WHITE){
+        c= look_up_line(x,y,type,0,1);
+      }else if (x < GRID_WIDTH -1 && y < GRID_HEIGHT -1 && cells[x+1][y+1] == comp_type){
         //bottom right
-        c= look_up_line(x,y,1,1);
+        c= look_up_line(x,y,type,1,1);
       }else{
         c= false;
       }
       return c;
   }
- 
-
-//void update_white_choices(){
-  
-//}
-
-
-
-
-
-
-
-
-
 
 void draw(){
-    update_black_choices();
-  //update_white_choices();
+  update_choices();
   
   //clear screen
   background(200);
@@ -160,6 +155,7 @@ void draw(){
   
     //
     noStroke();
+    fill(255);
   for (int i = 0; i < GRID_WIDTH; i = i + 1) {
     float x = cell_w * (i + 1) - cell_w;
     
@@ -183,11 +179,8 @@ void draw(){
        
         y += cell_h * 0.1;
      if (black_choices[i][j]){
-       fill(0);
-     }   else {
-       continue;
+       ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
      } 
-     ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
     }
   }
 }
