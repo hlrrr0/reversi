@@ -6,9 +6,18 @@ int WHITE = 2;
 int[][] cells;
 int turn = BLACK;
 boolean[][] black_choices;
-boolean[][] white_choices;
+boolean[][] white_choices; 
 PFont f;
 boolean game_end;
+boolean restart= false;
+
+void start_game(){
+  turn = BLACK;
+  game_end = false;
+  restart = false;
+  update_choices();
+  next_turn();
+}
 
 void setup() {
   size(400, 400);
@@ -20,11 +29,9 @@ void setup() {
   black_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
   white_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
   test_set();
-  update_choices();
-  next_turn();
- 
   //init_board();
-
+  
+  start_game();
   //set_fill_patern();
   //white_choices[4][2]=true;
   //white_choices[5][3]=true;
@@ -56,6 +63,10 @@ void mousePressed(){
     update_choices();
     next_turn();
   }
+  if (restart&&game_end) {
+   init_board();
+   start_game();
+  }
   //cells[x][y] = (cells[x][y]+1) % 3;
 }
 
@@ -79,6 +90,21 @@ void next_turn(){
      game_end = true;
    }
 }
+void update(int x, int y){
+  if (next_game(width*0.39,height*0.63,90,40)){
+    restart = true;
+  }
+}
+  
+boolean next_game(float x, float y, int width, int height)  {
+  if (mouseX >= x && mouseX <= x+width && 
+      mouseY >= y && mouseY <= y+height) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 boolean look_up_line(int x, int y,int type, int dx, int dy){
   for (
   int i = x + dx,j = y + dy;
@@ -189,6 +215,7 @@ boolean check_can_put(int x,int y, int type){
 }
 
 void draw(){
+  update(mouseX,mouseY);
   //clear screen
   background(40,180,40);
   int cell_w = width / GRID_WIDTH;
@@ -263,6 +290,7 @@ void draw(){
   }
   if (game_end){
     drawGameEnd();
+    draw_retry();
   }
 }
 
@@ -272,7 +300,12 @@ void drawGameEnd() {
   fill(255,0,0);
   text("GAME END", width*0.5, height*0.5);
 }
-
+void draw_retry(){
+  fill(0);
+  rect(width*0.39,height*0.63,90,40);
+  fill(255);
+  text("ReTry", width*0.5, height*0.7);
+}
 void set_fill_patern(){
   cells[1][0]=WHITE;
   cells[2][0]=BLACK;
