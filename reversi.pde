@@ -7,13 +7,24 @@ int[][] cells;
 int turn = BLACK;
 boolean[][] black_choices;
 boolean[][] white_choices;
+PFont f;
+boolean game_end;
 
 void setup() {
   size(400, 400);
+  // Create the font
+  printArray(PFont.list());
+  f = createFont("SourceCodePro-Regular.ttf", 24);
+  textFont(f);
   cells = new int [GRID_WIDTH][GRID_HEIGHT];
   black_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
   white_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
-  init_board();
+  test_set();
+  update_choices();
+  next_turn();
+ 
+  //init_board();
+
   //set_fill_patern();
   //white_choices[4][2]=true;
   //white_choices[5][3]=true;
@@ -23,9 +34,7 @@ void setup() {
   //black_choices[2][3]=true;
   //black_choices[0][0]=true;
   //black_choices[7][7]=true;
-
 }
-
 
 void mousePressed(){
   int x = mouseX/(width/GRID_WIDTH);
@@ -44,9 +53,10 @@ void mousePressed(){
     
     
     turn = complement_type(turn);
+    update_choices();
+    next_turn();
   }
   //cells[x][y] = (cells[x][y]+1) % 3;
-
 }
 
 
@@ -60,7 +70,15 @@ void update_choices(){
     }
   }
 }
-
+void next_turn(){
+    if(count_choices(choices(turn))==0){
+      turn =complement_type(turn) ;
+    }
+    
+    if(count_choices(black_choices)==0&&count_choices(white_choices)==0){
+     game_end = true;
+   }
+}
 boolean look_up_line(int x, int y,int type, int dx, int dy){
   for (
   int i = x + dx,j = y + dy;
@@ -76,7 +94,6 @@ boolean look_up_line(int x, int y,int type, int dx, int dy){
   }
   return false;
 }
-
 int reverse_line(int x, int y,int type, int dx, int dy){
   int count = 0;
   if (!look_up_line(x,y,type,dx,dy)){
@@ -116,6 +133,20 @@ boolean[][] choices(int type){
     return null;
   }
 }
+
+int count_choices(boolean[][] n){
+  int count = 0;
+  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
+    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+      if(n[i][j] == true){
+        count +=1;
+      }
+    }
+  }
+  return count;
+}
+
+
 boolean check_can_put(int x,int y, int type){
   int comp_type = complement_type(type);
   boolean c =false;
@@ -158,14 +189,10 @@ boolean check_can_put(int x,int y, int type){
 }
 
 void draw(){
-  update_choices();
-
   //clear screen
-  background(200);
+  background(40,180,40);
   int cell_w = width / GRID_WIDTH;
   int cell_h = height / GRID_HEIGHT;
-
-
   stroke(0);
 
   //draw grid(vartical)
@@ -199,38 +226,51 @@ void draw(){
 
   //
   noStroke();
-  fill(255);
-  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
-    float x = cell_w * (i + 1) - cell_w;
-
-    x += cell_w * 0.5;
-
-    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
-      float y = cell_h * (j + 1) - cell_h;
-
-      y += cell_h * 0.5;
-      if (white_choices[i][j]){
-        ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
-      }
-    }
-  }
-  fill(0);
-  for (int i = 0; i < GRID_HEIGHT; i = i + 1) {
-    float x = cell_h * (i + 1) - cell_h;
-
-    x += cell_w * 0.5;
-    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
-      float y = cell_h * (j + 1) - cell_h;
-
-      y += cell_h * 0.5;
-      if (black_choices[i][j]){
-        if((white_choices[i][j])&&(System.currentTimeMillis()/500) % 2 == 0){
-          continue;
+  if(turn == BLACK){
+    fill(0);
+    for (int i = 0; i < GRID_HEIGHT; i = i + 1) {
+      float x = cell_h * (i + 1) - cell_h;
+  
+      x += cell_w * 0.5;
+      for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+        float y = cell_h * (j + 1) - cell_h;
+  
+        y += cell_h * 0.5;
+        if (black_choices[i][j]){
+          //if((white_choices[i][j])&&(System.currentTimeMillis()/500) % 2 == 0){
+          // continue;
+          //}
+          ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
         }
-        ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
+      }
+    }
+  }else{
+    fill(255);
+    for (int i = 0; i < GRID_WIDTH; i = i + 1) {
+      float x = cell_w * (i + 1) - cell_w;
+  
+      x += cell_w * 0.5;
+  
+      for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+        float y = cell_h * (j + 1) - cell_h;
+  
+        y += cell_h * 0.5;
+        if (white_choices[i][j]){
+          ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
+        }
       }
     }
   }
+  if (game_end){
+    drawGameEnd();
+  }
+}
+
+void drawGameEnd() {
+  textAlign(CENTER);
+  
+  fill(255,0,0);
+  text("GAME END", width*0.5, height*0.5);
 }
 
 void set_fill_patern(){
@@ -246,14 +286,19 @@ void set_fill_patern(){
   cells[2][3]=BLACK;
 }
 
+void test_set(){
+  cells[0][0]=BLACK;
+  cells[0][1]=WHITE;
+  cells[1][0]=WHITE;
+  cells[1][1]=WHITE;
+}
+
 void init_board(){
   for(int x = 0; x < GRID_WIDTH; x++){
     for(int y = 0; y < GRID_HEIGHT; y++){
       cells[x][y] = BLANK;
     }
   }
-
-
   float cx = (GRID_WIDTH - 1) / 2.0;
   float cy = (GRID_HEIGHT - 1) / 2.0;
 
