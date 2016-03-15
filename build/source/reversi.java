@@ -101,6 +101,7 @@ public void update_choices(){
 public void next_turn(){
     if(count_choices(choices(turn))==0){
       turn =complement_type(turn) ;
+      ai();
     }
 
     if(count_choices(black_choices)==0&&count_choices(white_choices)==0){
@@ -112,6 +113,11 @@ public void update(int x, int y){
     if (next_game(width*0.39f,height*0.63f,90,40)){
       restart = true;
     }
+  }
+}
+public void ai(){
+  if(turn == white){
+    random(white_choices);
   }
 }
 public boolean next_game(float x, float y, int width, int height)  {

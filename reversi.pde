@@ -49,20 +49,7 @@ void mousePressed(){
   int y = mouseY/(height/GRID_HEIGHT);
 
   if(choices(turn)[x][y]){
-    cells[x][y] = turn;
-    reverse_line(x,y,turn,-1,-1);
-    reverse_line(x,y,turn,0,-1);
-    reverse_line(x,y,turn,1,-1);
-    reverse_line(x,y,turn,-1,0);
-    reverse_line(x,y,turn,1,0);
-    reverse_line(x,y,turn,-1,1);
-    reverse_line(x,y,turn,0,1);
-    reverse_line(x,y,turn,1,1);
-
-
-    turn = complement_type(turn);
-    update_choices();
-    next_turn();
+   put_disc();
   }
   if (restart) {
    init_board();
@@ -96,7 +83,46 @@ void update(int x, int y){
     if (next_game(width*0.39,height*0.63,90,40)){
       restart = true;
     }
+  }else{
+    cpu();
   }
+}
+void cpu(){
+  if(turn == WHITE){
+    int index= int(random(count_choices(choices(turn))));
+    int[] pos = cpu_choice(choices(turn),index);
+    next_turn();
+
+  }
+}
+int[] cpu_choice(boolean[][] n,int m){
+  int count =0;
+  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
+    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+      if(n[i][j]){
+        if(count == m){
+          return new int[]{i,j};
+        }
+        count +=1;
+      }
+    }
+  }
+  return null;
+}
+void put_disc(int x,int y) {
+    cells[x][y] = turn;
+    reverse_line(x,y,turn,-1,-1);
+    reverse_line(x,y,turn,0,-1);
+    reverse_line(x,y,turn,1,-1);
+    reverse_line(x,y,turn,-1,0);
+    reverse_line(x,y,turn,1,0);
+    reverse_line(x,y,turn,-1,1);
+    reverse_line(x,y,turn,0,1);
+    reverse_line(x,y,turn,1,1);
+
+    turn = complement_type(turn);
+    update_choices();
+    next_turn();
 }
 boolean next_game(float x, float y, int width, int height)  {
   if (mouseX >= x && mouseX <= x+width &&
