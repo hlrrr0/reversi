@@ -1,3 +1,19 @@
+import processing.core.*; 
+import processing.data.*; 
+import processing.event.*; 
+import processing.opengl.*; 
+
+import java.util.HashMap; 
+import java.util.ArrayList; 
+import java.io.File; 
+import java.io.BufferedReader; 
+import java.io.PrintWriter; 
+import java.io.InputStream; 
+import java.io.OutputStream; 
+import java.io.IOException; 
+
+public class reversi extends PApplet {
+
 int GRID_WIDTH = 8;
 int GRID_HEIGHT = 8;
 int BLANK = 0;
@@ -12,7 +28,7 @@ boolean game_end;
 boolean restart= false;
 
 
-void start_game(){
+public void start_game(){
   turn = BLACK;
   game_end = false;
   restart = false;
@@ -20,8 +36,8 @@ void start_game(){
   next_turn();
 }
 
-void setup() {
-  size(400, 400);
+public void setup() {
+  
   // Create the font
   // printArray(PFont.list());
   f = createFont("SourceCodePro-Regular.ttf", 24);
@@ -44,7 +60,7 @@ void setup() {
   //black_choices[7][7]=true;
 }
 
-void mousePressed(){
+public void mousePressed(){
   int x = mouseX/(width/GRID_WIDTH);
   int y = mouseY/(height/GRID_HEIGHT);
 
@@ -73,7 +89,7 @@ void mousePressed(){
 
 
 
-void update_choices(){
+public void update_choices(){
 
   for (int i = 0; i < GRID_WIDTH; i = i + 1) {
     for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
@@ -82,7 +98,7 @@ void update_choices(){
     }
   }
 }
-void next_turn(){
+public void next_turn(){
     if(count_choices(choices(turn))==0){
       turn =complement_type(turn) ;
     }
@@ -91,14 +107,14 @@ void next_turn(){
      game_end = true;
    }
 }
-void update(int x, int y){
+public void update(int x, int y){
   if(game_end == true){
-    if (next_game(width*0.39,height*0.63,90,40)){
+    if (next_game(width*0.39f,height*0.63f,90,40)){
       restart = true;
     }
   }
 }
-boolean next_game(float x, float y, int width, int height)  {
+public boolean next_game(float x, float y, int width, int height)  {
   if (mouseX >= x && mouseX <= x+width &&
       mouseY >= y && mouseY <= y+height) {
     return true;
@@ -106,7 +122,7 @@ boolean next_game(float x, float y, int width, int height)  {
     return false;
   }
 }
-boolean look_up_line(int x, int y,int type, int dx, int dy){
+public boolean look_up_line(int x, int y,int type, int dx, int dy){
   for (
   int i = x + dx,j = y + dy;
   0 <= i&&i < GRID_WIDTH && 0<=j && j <GRID_HEIGHT;
@@ -121,7 +137,7 @@ boolean look_up_line(int x, int y,int type, int dx, int dy){
   }
   return false;
 }
-int reverse_line(int x, int y,int type, int dx, int dy){
+public int reverse_line(int x, int y,int type, int dx, int dy){
   int count = 0;
   if (!look_up_line(x,y,type,dx,dy)){
     return 0;
@@ -142,7 +158,7 @@ int reverse_line(int x, int y,int type, int dx, int dy){
   return count;
 }
 
-int complement_type(int type){
+public int complement_type(int type){
   if(type == WHITE){
     return BLACK;
   }else if (type == BLACK){
@@ -151,7 +167,7 @@ int complement_type(int type){
     return BLANK;
   }
 }
-boolean[][] choices(int type){
+public boolean[][] choices(int type){
   if(type == WHITE){
     return white_choices;
   }else if (type == BLACK){
@@ -162,7 +178,7 @@ boolean[][] choices(int type){
 }
 
 
-int count_choices(boolean[][] n){
+public int count_choices(boolean[][] n){
   int count = 0;
   for (int i = 0; i < GRID_WIDTH; i = i + 1) {
     for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
@@ -174,7 +190,7 @@ int count_choices(boolean[][] n){
   return count;
 }
 
-int count_disc(int[][] n,int type){
+public int count_disc(int[][] n,int type){
   int count = 0;
   for (int i = 0; i < GRID_WIDTH; i = i + 1) {
     for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
@@ -185,19 +201,19 @@ int count_disc(int[][] n,int type){
   }
   return count;
 }
-void draw_result(){
+public void draw_result(){
   if(game_end == true){
     // fill(255);
     // rect(width*0.3,height*0.3,250,250);
     fill(0);
-    text("[BLACK]:"+count_disc(cells,BLACK),width*0.5,height*0.3);
-    text("vs",width*0.5,height*0.35);
+    text("[BLACK]:"+count_disc(cells,BLACK),width*0.5f,height*0.3f);
+    text("vs",width*0.5f,height*0.35f);
     fill(255);
-    text("[WHITE]:"+count_disc(cells,WHITE),width*0.5,height*0.4);
+    text("[WHITE]:"+count_disc(cells,WHITE),width*0.5f,height*0.4f);
   }
 }
 
-boolean check_can_put(int x,int y, int type){
+public boolean check_can_put(int x,int y, int type){
   int comp_type = complement_type(type);
   boolean c =false;
   if(cells[x][y] != BLANK){
@@ -238,7 +254,7 @@ boolean check_can_put(int x,int y, int type){
   return c;
 }
 
-void draw(){
+public void draw(){
   update(mouseX,mouseY);
   //clear screen
   background(40,180,40);
@@ -271,7 +287,7 @@ void draw(){
       } else {
         continue;
       }
-      ellipse(x, y, cell_w * 0.7, cell_h * 0.7);
+      ellipse(x, y, cell_w * 0.7f, cell_h * 0.7f);
     }
   }
 
@@ -282,16 +298,16 @@ void draw(){
     for (int i = 0; i < GRID_HEIGHT; i = i + 1) {
       float x = cell_h * (i + 1) - cell_h;
 
-      x += cell_w * 0.5;
+      x += cell_w * 0.5f;
       for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
         float y = cell_h * (j + 1) - cell_h;
 
-        y += cell_h * 0.5;
+        y += cell_h * 0.5f;
         if (black_choices[i][j]){
           //if((white_choices[i][j])&&(System.currentTimeMillis()/500) % 2 == 0){
           // continue;
           //}
-          ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
+          ellipse(x, y, cell_w * 0.15f, cell_h * 0.15f);
         }
       }
     }
@@ -300,14 +316,14 @@ void draw(){
     for (int i = 0; i < GRID_WIDTH; i = i + 1) {
       float x = cell_w * (i + 1) - cell_w;
 
-      x += cell_w * 0.5;
+      x += cell_w * 0.5f;
 
       for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
         float y = cell_h * (j + 1) - cell_h;
 
-        y += cell_h * 0.5;
+        y += cell_h * 0.5f;
         if (white_choices[i][j]){
-          ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
+          ellipse(x, y, cell_w * 0.15f, cell_h * 0.15f);
         }
       }
     }
@@ -319,20 +335,20 @@ void draw(){
   }
 }
 
-void drawGameEnd() {
+public void drawGameEnd() {
   textAlign(CENTER);
 
   fill(255,0,0);
-  text("GAME END", width*0.5, height*0.5);
+  text("GAME END", width*0.5f, height*0.5f);
 }
-void draw_retry(){
+public void draw_retry(){
   fill(0);
-  rect(width*0.39,height*0.63,90,40);
+  rect(width*0.39f,height*0.63f,90,40);
   fill(255);
-  text("ReTry", width*0.5, height*0.7);
+  text("ReTry", width*0.5f, height*0.7f);
 }
 
-void set_fill_patern(){
+public void set_fill_patern(){
   cells[1][0]=WHITE;
   cells[2][0]=BLACK;
   cells[0][1]=BLACK;
@@ -345,24 +361,34 @@ void set_fill_patern(){
   cells[2][3]=BLACK;
 }
 
-void test_set(){
+public void test_set(){
   cells[0][0]=BLACK;
   cells[0][1]=WHITE;
   cells[1][0]=WHITE;
   cells[1][1]=WHITE;
 }
 
-void init_board(){
+public void init_board(){
   for(int x = 0; x < GRID_WIDTH; x++){
     for(int y = 0; y < GRID_HEIGHT; y++){
       cells[x][y] = BLANK;
     }
   }
-  float cx = (GRID_WIDTH - 1) / 2.0;
-  float cy = (GRID_HEIGHT - 1) / 2.0;
+  float cx = (GRID_WIDTH - 1) / 2.0f;
+  float cy = (GRID_HEIGHT - 1) / 2.0f;
 
   cells[floor(cx)][ceil(cy)] = BLACK;
   cells[ceil(cx)][floor(cy)] = BLACK;
   cells[ceil(cx)][ceil(cy)] = WHITE;
   cells[floor(cx)][floor(cy)] = WHITE;
+}
+  public void settings() {  size(400, 400); }
+  static public void main(String[] passedArgs) {
+    String[] appletArgs = new String[] { "reversi" };
+    if (passedArgs != null) {
+      PApplet.main(concat(appletArgs, passedArgs));
+    } else {
+      PApplet.main(appletArgs);
+    }
+  }
 }
