@@ -11,7 +11,6 @@ PFont f;
 boolean game_end;
 boolean restart= false;
 
-
 void start_game(){
   turn = BLACK;
   game_end = false;
@@ -22,26 +21,14 @@ void start_game(){
 
 void setup() {
   size(400, 400);
-  // Create the font
-  // printArray(PFont.list());
   f = createFont("SourceCodePro-Regular.ttf", 24);
   textFont(f);
   cells = new int [GRID_WIDTH][GRID_HEIGHT];
   black_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
   white_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
-  //test_set();
   init_board();
 
   start_game();
-  //set_fill_patern();
-  //white_choices[4][2]=true;
-  //white_choices[5][3]=true;
-  //white_choices[0][0]=true;
-  //white_choices[7][7]=true;
-  //black_choices[3][2]=true;
-  //black_choices[2][3]=true;
-  //black_choices[0][0]=true;
-  //black_choices[7][7]=true;
 }
 
 void mousePressed(){
@@ -55,7 +42,6 @@ void mousePressed(){
    init_board();
    start_game();
   }
-  //cells[x][y] = (cells[x][y]+1) % 3;
 }
 
 
@@ -212,8 +198,6 @@ int count_disc(int[][] n,int type){
 }
 void draw_result(){
   if(game_end == true){
-    // fill(255);
-    // rect(width*0.3,height*0.3,250,250);
     fill(0);
     text("[BLACK]:"+count_disc(cells,BLACK),width*0.5,height*0.3);
     text("vs",width*0.5,height*0.35);
@@ -300,7 +284,6 @@ void draw(){
     }
   }
 
-  //
   noStroke();
   if(turn == BLACK){
     fill(0);
@@ -313,9 +296,6 @@ void draw(){
 
         y += cell_h * 0.5;
         if (black_choices[i][j]){
-          //if((white_choices[i][j])&&(System.currentTimeMillis()/500) % 2 == 0){
-          // continue;
-          //}
           ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
         }
       }
@@ -355,26 +335,6 @@ void draw_retry(){
   rect(width*0.39,height*0.63,90,40);
   fill(255);
   text("ReTry", width*0.5, height*0.7);
-}
-
-void set_fill_patern(){
-  cells[1][0]=WHITE;
-  cells[2][0]=BLACK;
-  cells[0][1]=BLACK;
-  cells[2][1]=WHITE;
-  cells[1][2]=WHITE;
-  cells[2][2]=BLACK;
-  cells[3][2]=WHITE;
-  cells[0][3]=WHITE;
-  cells[1][3]=BLACK;
-  cells[2][3]=BLACK;
-}
-
-void test_set(){
-  cells[0][0]=BLACK;
-  cells[0][1]=WHITE;
-  cells[1][0]=WHITE;
-  cells[1][1]=WHITE;
 }
 
 void init_board(){
