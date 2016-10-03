@@ -29,8 +29,8 @@ void setup() {
   cells = new int [GRID_WIDTH][GRID_HEIGHT];
   black_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
   white_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
-  test_set();
-  //init_board();
+  //test_set();
+  init_board();
 
   start_game();
   //set_fill_patern();
@@ -49,7 +49,7 @@ void mousePressed(){
   int y = mouseY/(height/GRID_HEIGHT);
 
   if(choices(turn)[x][y]){
-   put_disc();
+   put_disc(x,y); 
   }
   if (restart) {
    init_board();
@@ -90,9 +90,8 @@ void update(int x, int y){
 void cpu(){
   if(turn == WHITE){
     int index= int(random(count_choices(choices(turn))));
-    int[] pos = cpu_choice(choices(turn),index);
-    next_turn();
-
+    int[] pos = cpu_choice(choices(turn),index); 
+    put_disc(pos[0],pos[1]); 
   }
 }
 int[] cpu_choice(boolean[][] n,int m){
