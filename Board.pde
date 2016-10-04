@@ -1,6 +1,23 @@
 class Board {
+
+  void draw(){
+    background(40,180,40);
+    stroke(0);
     
-  void init_board(){
+    //draw grid(vartical)
+    for (int i = 0; i < GRID_WIDTH - 1; i++) {
+      int x = cell_w * (i + 1);
+      line(x, 0, x, height);
+    }
+
+    //draw grid(horizontal)
+    for (int j = 0; j < GRID_HEIGHT - 1; j++) {
+      int y = cell_h * (j + 1);
+      line(0, y, width, y);
+    }
+  }
+    
+  void initialize(){
 
     for(int x = 0; x < GRID_WIDTH; x++){
       for(int y = 0; y < GRID_HEIGHT; y++){
@@ -15,4 +32,5 @@ class Board {
     cells[ceil(cx)][ceil(cy)] = WHITE;
     cells[floor(cx)][floor(cy)] = WHITE;
   }
+
 }

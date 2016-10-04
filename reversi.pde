@@ -1,6 +1,10 @@
 int GRID_WIDTH = 8;
 int GRID_HEIGHT = 8;
+int WIDTH = 400;
+int HEIGHT = 400;
 Board board = new Board();
+Text text = new Text();
+Disc disc = new Disc();
 
 int DEFAULT_FONT_SIZE = 24;
 
@@ -15,6 +19,10 @@ PFont f;
 boolean game_end;
 boolean restart= false;
 
+int cell_w = (WIDTH/GRID_WIDTH);
+int cell_h = (HEIGHT/GRID_HEIGHT);
+
+
 void setup() {
   size(400, 400);
   f = createFont("SourceCodePro-Regular.ttf", DEFAULT_FONT_SIZE);
@@ -22,7 +30,7 @@ void setup() {
   cells = new int [GRID_WIDTH][GRID_HEIGHT];
   black_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
   white_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
-  board.init_board();
+  board.initialize();
 
   start_game();
 }
@@ -43,12 +51,10 @@ void mousePressed(){
    put_disc(x,y); 
   }
   if (restart) {
-   board.init_board();
+   board.initialize();
    start_game();
   }
 }
-
-
 
 void update_choices(){
 
@@ -59,6 +65,7 @@ void update_choices(){
     }
   }
 }
+
 void next_turn(){
     if(count_choices(choices(turn))==0){
       turn =complement_type(turn) ;
@@ -70,12 +77,21 @@ void next_turn(){
 }
 
 void update(int x, int y){
-  if(game_end == true){
+  if(game_end){
     if (next_game(width*0.39,height*0.63,90,40)){
       restart = true;
     }
-  }else{
+  } else {
     cpu();
+  }
+}
+
+boolean next_game(float x, float y, int width, int height)  {
+  if (mouseX >= x && mouseX <= x+width &&
+      mouseY >= y && mouseY <= y+height) {
+    return true;
+  } else {
+    return false;
   }
 }
 
@@ -118,14 +134,7 @@ void put_disc(int x,int y) {
     next_turn();
 }
 
-boolean next_game(float x, float y, int width, int height)  {
-  if (mouseX >= x && mouseX <= x+width &&
-      mouseY >= y && mouseY <= y+height) {
-    return true;
-  } else {
-    return false;
-  }
-}
+
 
 boolean look_up_line(int x, int y,int type, int dx, int dy){
   for (
@@ -196,27 +205,6 @@ int count_choices(boolean[][] n){
   return count;
 }
 
-int count_disc(int[][] n,int type){
-  int count = 0;
-  for (int i = 0; i < GRID_WIDTH; i++) {
-    for (int j = 0; j < GRID_HEIGHT; j++) {
-      if(n[i][j] == type){
-        count +=1;
-      }
-    }
-  }
-  return count;
-}
-void draw_result(){
-  if(game_end == true){
-    fill(0);
-    text("[BLACK]:"+count_disc(cells,BLACK),width*0.5,height*0.3);
-    text("vs",width*0.5,height*0.35);
-    fill(255);
-    text("[WHITE]:"+count_disc(cells,WHITE),width*0.5,height*0.4);
-  }
-}
-
 boolean check_can_put(int x,int y, int type){
   int comp_type = complement_type(type);
   boolean c =false;
@@ -261,89 +249,15 @@ boolean check_can_put(int x,int y, int type){
 void draw(){
   update(mouseX,mouseY);
   //clear screen
-  background(40,180,40);
-  int cell_w = width / GRID_WIDTH;
-  int cell_h = height / GRID_HEIGHT;
-  stroke(0);
-
-  //draw grid(vartical)
-  for (int i = 0; i < GRID_WIDTH - 1; i++) {
-    int x = cell_w * (i + 1);
-    line(x, 0, x, height);
-  }
-
-  //draw grid(horizontal)
-  for (int i = 0; i < GRID_HEIGHT - 1; i++) {
-    int y = cell_h * (i + 1);
-    line(0, y, width, y);
-  }
-
+  board.draw();
+  disc.draw();
   //draw discs
-  for (int i = 0; i < GRID_WIDTH; i++) {
-    int x = cell_w * (i + 1) - cell_w / 2;
-    for (int j = 0; j < GRID_HEIGHT; j++) {
-      int y = cell_h * (j + 1) - cell_h / 2;
-
-      if (cells[i][j] == WHITE){
-        fill(255);
-      } else if (cells[i][j] == BLACK){
-        fill(0);
-      } else {
-        continue;
-      }
-      ellipse(x, y, cell_w * 0.7, cell_h * 0.7);
-    }
-  }
-
-  noStroke();
-  if(turn == BLACK){
-    fill(0);
-    for (int i = 0; i < GRID_HEIGHT; i++) {
-      float x = cell_h * (i + 1) - cell_h;
-
-      x += cell_w * 0.5;
-      for (int j = 0; j < GRID_HEIGHT; j++) {
-        float y = cell_h * (j + 1) - cell_h;
-
-        y += cell_h * 0.5;
-        if (black_choices[i][j]){
-          ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
-        }
-      }
-    }
-  }else{
-    fill(255);
-    for (int i = 0; i < GRID_WIDTH; i++) {
-      float x = cell_w * (i + 1) - cell_w;
-
-      x += cell_w * 0.5;
-
-      for (int j = 0; j < GRID_HEIGHT; j++) {
-        float y = cell_h * (j + 1) - cell_h;
-
-        y += cell_h * 0.5;
-        if (white_choices[i][j]){
-          ellipse(x, y, cell_w * 0.15, cell_h * 0.15);
-        }
-      }
-    }
-  }
+  
   if (game_end){
-    draw_result();
-    drawGameEnd();
-    draw_retry();
+    text.draw_result();
+    text.drawGameEnd();
+    text.draw_retry();
   }
 }
 
-void drawGameEnd() {
-  textAlign(CENTER);
 
-  fill(255,0,0);
-  text("GAME END", width*0.5, height*0.5);
-}
-void draw_retry(){
-  fill(0);
-  rect(width*0.39,height*0.63,90,40);
-  fill(255);
-  text("ReTry", width*0.5, height*0.7);
-}
