@@ -48,7 +48,7 @@ void mousePressed(){
   int y = mouseY/(height/GRID_HEIGHT);
 
   if(choices(turn)[x][y]){
-   put_disc(x,y); 
+   disc.put_disc(x,y); 
   }
   if (restart) {
    board.initialize();
@@ -60,8 +60,8 @@ void update_choices(){
 
   for (int i = 0; i < GRID_WIDTH; i++) {
     for (int j = 0; j < GRID_HEIGHT; j++) {
-      black_choices[i][j] = check_can_put(i,j,BLACK);
-      white_choices[i][j] = check_can_put(i,j,WHITE);
+      black_choices[i][j] = disc.check_can_put(i,j,BLACK);
+      white_choices[i][j] = disc.check_can_put(i,j,WHITE);
     }
   }
 }
@@ -99,7 +99,7 @@ void cpu(){
   if(turn == WHITE){
     int index= int(random(count_choices(choices(turn))));
     int[] pos = cpu_choice(choices(turn),index); 
-    put_disc(pos[0],pos[1]); 
+    disc.put_disc(pos[0],pos[1]); 
   }
 }
 
@@ -117,24 +117,6 @@ int[] cpu_choice(boolean[][] n,int m){
   }
   return null;
 }
-
-void put_disc(int x,int y) {
-    cells[x][y] = turn;
-    reverse_line(x,y,turn,-1,-1);
-    reverse_line(x,y,turn,0,-1);
-    reverse_line(x,y,turn,1,-1);
-    reverse_line(x,y,turn,-1,0);
-    reverse_line(x,y,turn,1,0);
-    reverse_line(x,y,turn,-1,1);
-    reverse_line(x,y,turn,0,1);
-    reverse_line(x,y,turn,1,1);
-
-    turn = complement_type(turn);
-    update_choices();
-    next_turn();
-}
-
-
 
 boolean look_up_line(int x, int y,int type, int dx, int dy){
   for (
@@ -182,6 +164,7 @@ int complement_type(int type){
     return BLANK;
   }
 }
+
 boolean[][] choices(int type){
   if(type == WHITE){
     return white_choices;
@@ -191,7 +174,6 @@ boolean[][] choices(int type){
     return null;
   }
 }
-
 
 int count_choices(boolean[][] n){
   int count = 0;
@@ -205,53 +187,10 @@ int count_choices(boolean[][] n){
   return count;
 }
 
-boolean check_can_put(int x,int y, int type){
-  int comp_type = complement_type(type);
-  boolean c =false;
-  if(cells[x][y] != BLANK){
-    return false;
-  }
-  if(x>0 && y>0 && cells[x-1][y-1] == comp_type){
-    //top left
-    c|= look_up_line(x,y,type,-1,-1);
-  }
-  if (y>0 && cells[x][y-1] == comp_type){
-    //top
-    c|= look_up_line(x,y,type,0,-1);
-  }
-  if (x< GRID_WIDTH -1 && y > 0 && cells[x+1][y-1] == comp_type){
-    //top right
-    c|= look_up_line(x,y,type,1,-1);
-  }
-  if (x>0 && cells[x-1][y] == comp_type){
-    //left
-    c|= look_up_line(x,y,type,-1,0);
-  }
-  if (x<GRID_WIDTH -1 && cells[x+1][y] == comp_type){
-    //right
-    c|= look_up_line(x,y,type,1,0);
-  }
-  if (x>0 && y<GRID_HEIGHT -1 && cells[x-1][y+1] == comp_type){
-    //bottom left
-    c|= look_up_line(x,y,type,-1,1);
-  }
-  if (y<GRID_HEIGHT -1 && cells[x][y+1] == comp_type){
-    //bottom
-    c|= look_up_line(x,y,type,0,1);
-  }
-  if (x < GRID_WIDTH -1 && y < GRID_HEIGHT -1 && cells[x+1][y+1] == comp_type){
-    //bottom right
-    c|= look_up_line(x,y,type,1,1);
-  }
-  return c;
-}
-
 void draw(){
   update(mouseX,mouseY);
-  //clear screen
   board.draw();
   disc.draw();
-  //draw discs
   
   if (game_end){
     text.draw_result();
@@ -259,5 +198,3 @@ void draw(){
     text.draw_retry();
   }
 }
-
-
