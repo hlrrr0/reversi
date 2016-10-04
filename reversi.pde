@@ -64,6 +64,7 @@ void next_turn(){
      game_end = true;
    }
 }
+
 void update(int x, int y){
   if(game_end == true){
     if (next_game(width*0.39,height*0.63,90,40)){
@@ -73,6 +74,7 @@ void update(int x, int y){
     cpu();
   }
 }
+
 void cpu(){
   if(turn == WHITE){
     int index= int(random(count_choices(choices(turn))));
@@ -80,10 +82,11 @@ void cpu(){
     put_disc(pos[0],pos[1]); 
   }
 }
+
 int[] cpu_choice(boolean[][] n,int m){
   int count =0;
-  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
-    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+  for (int i = 0; i < GRID_WIDTH; i++) {
+    for (int j = 0; j < GRID_HEIGHT; j++) {
       if(n[i][j]){
         if(count == m){
           return new int[]{i,j};
@@ -94,6 +97,7 @@ int[] cpu_choice(boolean[][] n,int m){
   }
   return null;
 }
+
 void put_disc(int x,int y) {
     cells[x][y] = turn;
     reverse_line(x,y,turn,-1,-1);
@@ -109,6 +113,7 @@ void put_disc(int x,int y) {
     update_choices();
     next_turn();
 }
+
 boolean next_game(float x, float y, int width, int height)  {
   if (mouseX >= x && mouseX <= x+width &&
       mouseY >= y && mouseY <= y+height) {
@@ -117,6 +122,7 @@ boolean next_game(float x, float y, int width, int height)  {
     return false;
   }
 }
+
 boolean look_up_line(int x, int y,int type, int dx, int dy){
   for (
   int i = x + dx,j = y + dy;
@@ -132,6 +138,7 @@ boolean look_up_line(int x, int y,int type, int dx, int dy){
   }
   return false;
 }
+
 int reverse_line(int x, int y,int type, int dx, int dy){
   int count = 0;
   if (!look_up_line(x,y,type,dx,dy)){
@@ -175,8 +182,8 @@ boolean[][] choices(int type){
 
 int count_choices(boolean[][] n){
   int count = 0;
-  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
-    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+  for (int i = 0; i < GRID_WIDTH; i++) {
+    for (int j = 0; j < GRID_HEIGHT; j++) {
       if(n[i][j] == true){
         count +=1;
       }
@@ -187,8 +194,8 @@ int count_choices(boolean[][] n){
 
 int count_disc(int[][] n,int type){
   int count = 0;
-  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
-    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+  for (int i = 0; i < GRID_WIDTH; i++) {
+    for (int j = 0; j < GRID_HEIGHT; j++) {
       if(n[i][j] == type){
         count +=1;
       }
@@ -256,21 +263,21 @@ void draw(){
   stroke(0);
 
   //draw grid(vartical)
-  for (int i = 0; i < GRID_WIDTH - 1; i = i + 1) {
+  for (int i = 0; i < GRID_WIDTH - 1; i++) {
     int x = cell_w * (i + 1);
     line(x, 0, x, height);
   }
 
   //draw grid(horizontal)
-  for (int i = 0; i < GRID_HEIGHT - 1; i = i + 1) {
+  for (int i = 0; i < GRID_HEIGHT - 1; i++) {
     int y = cell_h * (i + 1);
     line(0, y, width, y);
   }
 
   //draw discs
-  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
+  for (int i = 0; i < GRID_WIDTH; i++) {
     int x = cell_w * (i + 1) - cell_w / 2;
-    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+    for (int j = 0; j < GRID_HEIGHT; j++) {
       int y = cell_h * (j + 1) - cell_h / 2;
 
       if (cells[i][j] == WHITE){
@@ -287,11 +294,11 @@ void draw(){
   noStroke();
   if(turn == BLACK){
     fill(0);
-    for (int i = 0; i < GRID_HEIGHT; i = i + 1) {
+    for (int i = 0; i < GRID_HEIGHT; i++) {
       float x = cell_h * (i + 1) - cell_h;
 
       x += cell_w * 0.5;
-      for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+      for (int j = 0; j < GRID_HEIGHT; j++) {
         float y = cell_h * (j + 1) - cell_h;
 
         y += cell_h * 0.5;
@@ -302,12 +309,12 @@ void draw(){
     }
   }else{
     fill(255);
-    for (int i = 0; i < GRID_WIDTH; i = i + 1) {
+    for (int i = 0; i < GRID_WIDTH; i++) {
       float x = cell_w * (i + 1) - cell_w;
 
       x += cell_w * 0.5;
 
-      for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+      for (int j = 0; j < GRID_HEIGHT; j++) {
         float y = cell_h * (j + 1) - cell_h;
 
         y += cell_h * 0.5;
