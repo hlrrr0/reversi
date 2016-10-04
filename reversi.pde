@@ -1,5 +1,9 @@
 int GRID_WIDTH = 8;
 int GRID_HEIGHT = 8;
+Board board = new Board();
+
+int DEFAULT_FONT_SIZE = 24;
+
 int BLANK = 0;
 int BLACK = 1;
 int WHITE = 2;
@@ -11,24 +15,24 @@ PFont f;
 boolean game_end;
 boolean restart= false;
 
+void setup() {
+  size(400, 400);
+  f = createFont("SourceCodePro-Regular.ttf", DEFAULT_FONT_SIZE);
+  textFont(f);
+  cells = new int [GRID_WIDTH][GRID_HEIGHT];
+  black_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
+  white_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
+  board.init_board();
+
+  start_game();
+}
+
 void start_game(){
   turn = BLACK;
   game_end = false;
   restart = false;
   update_choices();
   next_turn();
-}
-
-void setup() {
-  size(400, 400);
-  f = createFont("SourceCodePro-Regular.ttf", 24);
-  textFont(f);
-  cells = new int [GRID_WIDTH][GRID_HEIGHT];
-  black_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
-  white_choices = new boolean [GRID_WIDTH][GRID_HEIGHT];
-  init_board();
-
-  start_game();
 }
 
 void mousePressed(){
@@ -39,7 +43,7 @@ void mousePressed(){
    put_disc(x,y); 
   }
   if (restart) {
-   init_board();
+   board.init_board();
    start_game();
   }
 }
@@ -48,8 +52,8 @@ void mousePressed(){
 
 void update_choices(){
 
-  for (int i = 0; i < GRID_WIDTH; i = i + 1) {
-    for (int j = 0; j < GRID_HEIGHT; j = j + 1) {
+  for (int i = 0; i < GRID_WIDTH; i++) {
+    for (int j = 0; j < GRID_HEIGHT; j++) {
       black_choices[i][j] = check_can_put(i,j,BLACK);
       white_choices[i][j] = check_can_put(i,j,WHITE);
     }
@@ -342,19 +346,4 @@ void draw_retry(){
   rect(width*0.39,height*0.63,90,40);
   fill(255);
   text("ReTry", width*0.5, height*0.7);
-}
-
-void init_board(){
-  for(int x = 0; x < GRID_WIDTH; x++){
-    for(int y = 0; y < GRID_HEIGHT; y++){
-      cells[x][y] = BLANK;
-    }
-  }
-  float cx = (GRID_WIDTH - 1) / 2.0;
-  float cy = (GRID_HEIGHT - 1) / 2.0;
-
-  cells[floor(cx)][ceil(cy)] = BLACK;
-  cells[ceil(cx)][floor(cy)] = BLACK;
-  cells[ceil(cx)][ceil(cy)] = WHITE;
-  cells[floor(cx)][floor(cy)] = WHITE;
 }
