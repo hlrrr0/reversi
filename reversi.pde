@@ -2,9 +2,11 @@ int GRID_WIDTH = 8;
 int GRID_HEIGHT = 8;
 int WIDTH = 400;
 int HEIGHT = 400;
+
 Board board = new Board();
 Text text = new Text();
 Disc disc = new Disc();
+Cpu cpu = new Cpu();
 
 int DEFAULT_FONT_SIZE = 24;
 
@@ -39,7 +41,7 @@ void start_game(){
   turn = BLACK;
   game_end = false;
   restart = false;
-  update_choices();
+  disc.update_choices();
   next_turn();
 }
 
@@ -53,16 +55,6 @@ void mousePressed(){
   if (restart) {
    board.initialize();
    start_game();
-  }
-}
-
-void update_choices(){
-
-  for (int i = 0; i < GRID_WIDTH; i++) {
-    for (int j = 0; j < GRID_HEIGHT; j++) {
-      black_choices[i][j] = disc.check_can_put(i,j,BLACK);
-      white_choices[i][j] = disc.check_can_put(i,j,WHITE);
-    }
   }
 }
 
@@ -82,7 +74,7 @@ void update(int x, int y){
       restart = true;
     }
   } else {
-    cpu();
+    cpu.action();
   }
 }
 
@@ -93,66 +85,6 @@ boolean next_game(float x, float y, int width, int height)  {
   } else {
     return false;
   }
-}
-
-void cpu(){
-  if(turn == WHITE){
-    int index= int(random(count_choices(choices(turn))));
-    int[] pos = cpu_choice(choices(turn),index); 
-    disc.put_disc(pos[0],pos[1]); 
-  }
-}
-
-int[] cpu_choice(boolean[][] n,int m){
-  int count =0;
-  for (int i = 0; i < GRID_WIDTH; i++) {
-    for (int j = 0; j < GRID_HEIGHT; j++) {
-      if(n[i][j]){
-        if(count == m){
-          return new int[]{i,j};
-        }
-        count +=1;
-      }
-    }
-  }
-  return null;
-}
-
-boolean look_up_line(int x, int y,int type, int dx, int dy){
-  for (
-  int i = x + dx,j = y + dy;
-  0 <= i&&i < GRID_WIDTH && 0<=j && j <GRID_HEIGHT;
-  i = i + dx,j = j + dy){
-    if(cells[i][j] == BLANK){
-      return false;
-    }else if (cells[i][j] == type){
-      return true;
-    }else{
-      continue;
-    }
-  }
-  return false;
-}
-
-int reverse_line(int x, int y,int type, int dx, int dy){
-  int count = 0;
-  if (!look_up_line(x,y,type,dx,dy)){
-    return 0;
-  }
-  for (
-  int i = x + dx,j = y + dy;
-  0 <= i&&i < GRID_WIDTH && 0<=j && j <GRID_HEIGHT;
-  i = i + dx,j = j + dy){
-    if(cells[i][j] == BLANK){
-      break;
-    }else if (cells[i][j] == type){
-      break;
-    }else{
-      count +=1;
-      cells[i][j]=type;
-    }
-  }
-  return count;
 }
 
 int complement_type(int type){

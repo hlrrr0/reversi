@@ -114,4 +114,49 @@ class Disc {
 	  }
 	  return c;
 	}
+	void update_choices(){
+
+	  for (int i = 0; i < GRID_WIDTH; i++) {
+	    for (int j = 0; j < GRID_HEIGHT; j++) {
+	      black_choices[i][j] = check_can_put(i,j,BLACK);
+	      white_choices[i][j] = check_can_put(i,j,WHITE);
+	    }
+	  }
+	}
+	boolean look_up_line(int x, int y,int type, int dx, int dy){
+	  for (
+	  int i = x + dx,j = y + dy;
+	  0 <= i&&i < GRID_WIDTH && 0<=j && j <GRID_HEIGHT;
+	  i = i + dx,j = j + dy){
+	    if(cells[i][j] == BLANK){
+	      return false;
+	    }else if (cells[i][j] == type){
+	      return true;
+	    }else{
+	      continue;
+	    }
+	  }
+	  return false;
+	}
+
+	int reverse_line(int x, int y,int type, int dx, int dy){
+	  int count = 0;
+	  if (!look_up_line(x,y,type,dx,dy)){
+	    return 0;
+	  }
+	  for (
+	  int i = x + dx,j = y + dy;
+	  0 <= i&&i < GRID_WIDTH && 0<=j && j <GRID_HEIGHT;
+	  i = i + dx,j = j + dy){
+	    if(cells[i][j] == BLANK){
+	      break;
+	    }else if (cells[i][j] == type){
+	      break;
+	    }else{
+	      count +=1;
+	      cells[i][j]=type;
+	    }
+	  }
+	  return count;
+	}
 }
